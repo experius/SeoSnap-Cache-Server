@@ -127,3 +127,5 @@ dmypy.json
 .idea
 tmp
 cache
+
+!rendertron_cache_server/cache
