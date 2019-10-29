@@ -3,7 +3,7 @@ from requests import Session, Request
 from urllib.parse import urlparse
 from . import Document, Query, Content
 from .. import constants
-
+import os
 
 class Resource:
     session: Session
@@ -12,7 +12,9 @@ class Resource:
         self.session = Session()
 
     def retrieve(self, doc: Document, q: Query) -> Content:
-        q.headers['Host'] = urlparse(constants.RENDERTRON_CACHE_RESOURCE_URL).netloc
+        website = urlparse(constants.RENDERTRON_CACHE_RESOURCE_URL).netloc
+        website = os.getenv("RENDERTRON_CACHE_HOSTNAME", website)
+        q.headers['Host'] = website
 
         request = Request(
             method=constants.RENDERTRON_CACHE_RESOURCE_METHOD,
