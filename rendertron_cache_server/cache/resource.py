@@ -22,8 +22,6 @@ class Resource:
             params=q.params
         ).prepare()
 
-        print(f'{constants.RENDERTRON_CACHE_RESOURCE_URL}/{q.route}')
-
         response = self.session.send(request)
         headers = {k: v for k, v in response.headers.items() if k.lower() not in constants.RENDERTRON_CACHE_HEADER_RESPONSE_BLACKLIST}
         content = Content(response.status_code, headers, response.text)

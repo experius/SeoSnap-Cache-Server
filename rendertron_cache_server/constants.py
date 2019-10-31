@@ -1,9 +1,8 @@
 import os
 from dotenv import load_dotenv, find_dotenv
 
-print(find_dotenv())
+load_dotenv(os.path.dirname(os.path.abspath(__file__)) + '../.env')
 load_dotenv(find_dotenv())
-print(os.getenv('RENDERTRON_CACHE_RESOURCE_URL', 'https://stackoverflow.com'))
 
 RENDERTRON_CACHE_DEBUG = bool(int(os.getenv('RENDERTRON_CACHE_DEBUG', 1)))
 RENDERTRON_CACHE_LOCK_TIMEOUT = float(os.getenv('RENDERTRON_CACHE_LOCK_TIMEOUT', 1))
