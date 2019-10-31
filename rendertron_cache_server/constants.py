@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv, find_dotenv
 
-load_dotenv(os.path.dirname(os.path.abspath(__file__)) + '../.env')
+load_dotenv(os.path.dirname(os.path.abspath(__file__)) + '/../.env')
 load_dotenv(find_dotenv())
 
 RENDERTRON_CACHE_DEBUG = bool(int(os.getenv('RENDERTRON_CACHE_DEBUG', 1)))
