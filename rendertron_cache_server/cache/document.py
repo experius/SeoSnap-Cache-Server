@@ -1,5 +1,7 @@
 from typing import Dict
 import os, json, portalocker
+from shutil import rmtree
+
 
 from ..constants import RENDERTRON_CACHE_LOCK_TIMEOUT
 
@@ -37,3 +39,8 @@ class Document:
     def delete(self):
         if self.exists():
             os.remove(self.path)
+
+    def purge(self):
+        path = os.path.dirname(self.path)
+        if os.path.exists(path):
+            rmtree(path, ignore_errors=False)

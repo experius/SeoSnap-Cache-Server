@@ -2,13 +2,20 @@
 Cache server which works as an intermediate between rendertron and the web.
 
 ## Usage
-### 1. Install package
-Either:
-* Clone the package and run ``pip install .``
-* Install directly using ``pip install -e git+git@bitbucket.org:experius/rendertron-cache-server.git#egg=rendertron_cache_server``
+### 1. Clone repo
+```
+git clone git@bitbucket.org:experius/rendertron-cache-server.git
+```
 
-### 2. Set variables
-Either copy .env.example as .env into your **working directory** and update the variables there or set them as your environment variables (example ``export RENDERTRON_CACHE_DEBUG=1``)
+### 2. Setup environment
+```bash
+pip install -r requirements.txt
+```
 
-### 3. Run
-Run using command rendertron_cache_server_start
+### 3. Run server
+```bash
+./start.sh
+```
+
+### 4. Open 
+0.0.0.0:5000

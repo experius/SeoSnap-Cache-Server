@@ -30,3 +30,7 @@ class Cache:
 
     def delete(self, doc: Document):
         doc.delete()
+
+    def purge(self, doc: Document):
+        doc.purge()
+

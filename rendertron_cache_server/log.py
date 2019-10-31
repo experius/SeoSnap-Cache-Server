@@ -1,5 +1,6 @@
 import json
 import logging
+import logging.config
 import os
 
 LOGGER_NAME = 'experius.rendertron.cache_server'

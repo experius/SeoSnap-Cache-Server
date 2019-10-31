@@ -17,8 +17,5 @@ setuptools.setup(
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.6',
-    entry_points={
-        'console_scripts': ['rendertron_cache_server_start=rendertron_cache_server.commands:start_server'],
-    }
+    python_requires='>=3.6'
 )

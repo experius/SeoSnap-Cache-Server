@@ -13,8 +13,7 @@ class Query:
         self.headers = headers
 
     def get_key(self) -> str:
-        route = self.route.lstrip('/').rstrip('/')
-        suffix = constants.RENDERTRON_CACHE_FILE_SUFFIX
+        route = self.route.lstrip('/').rstrip('/').lstrip('http://').lstrip('https://')
         key = route
         if len(self.params) != 0:
             params = urllib.parse.urlencode(self.params)

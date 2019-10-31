@@ -12,9 +12,8 @@ class Resource:
         self.session = Session()
 
     def retrieve(self, doc: Document, q: Query) -> Content:
-        website = urlparse(constants.RENDERTRON_CACHE_RESOURCE_URL).netloc
-        website = os.getenv("RENDERTRON_CACHE_HOSTNAME", website)
-        q.headers['Host'] = website
+        host = urlparse(q.route).netloc
+        q.headers['Host'] = host if host else urlparse(constants.RENDERTRON_CACHE_RESOURCE_URL).netloc
 
         request = Request(
             method=constants.RENDERTRON_CACHE_RESOURCE_METHOD,
@@ -23,9 +22,12 @@ class Resource:
             params=q.params
         ).prepare()
 
+        print(f'{constants.RENDERTRON_CACHE_RESOURCE_URL}/{q.route}')
+
         response = self.session.send(request)
         headers = {k: v for k, v in response.headers.items() if k.lower() not in constants.RENDERTRON_CACHE_HEADER_RESPONSE_BLACKLIST}
         content = Content(response.status_code, headers, response.text)
+
 
         if response.status_code // 100 == 2:
             doc.write(content)
