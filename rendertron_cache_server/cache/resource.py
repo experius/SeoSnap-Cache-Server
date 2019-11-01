@@ -1,8 +1,11 @@
+import logging
+
 from requests import Session, Request
 
 from urllib.parse import urlparse
 from . import Document, Query, Content
 from .. import constants
+from rendertron_cache_server import get_logger
 import os
 
 class Resource:
@@ -14,10 +17,14 @@ class Resource:
     def retrieve(self, doc: Document, q: Query) -> Content:
         host = urlparse(q.route).netloc
         q.headers['Host'] = host if host else urlparse(constants.RENDERTRON_CACHE_RESOURCE_URL).netloc
+        url = f'{constants.RENDERTRON_CACHE_RESOURCE_URL}/{q.route}'
 
+        logger = get_logger()
+
+        logger.log(logging.DEBUG, f'[MISS] Retrieving resource {url}')
         request = Request(
             method=constants.RENDERTRON_CACHE_RESOURCE_METHOD,
-            url=f'{constants.RENDERTRON_CACHE_RESOURCE_URL}/{q.route}',
+            url=url,
             headers=q.headers,
             params=q.params
         ).prepare()
@@ -26,6 +33,7 @@ class Resource:
         headers = {k: v for k, v in response.headers.items() if k.lower() not in constants.RENDERTRON_CACHE_HEADER_RESPONSE_BLACKLIST}
         content = Content(response.status_code, headers, response.text)
 
+        logger.log(logging.DEBUG, f'[MISS] Retrieved resource {url} - {response.status_code}')
 
         if response.status_code // 100 == 2:
             doc.write(content)

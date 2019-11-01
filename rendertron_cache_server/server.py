@@ -29,7 +29,8 @@ class Server:
     
     def _request_doc(self) -> Tuple[cache.Query, cache.Document]:
         headers = {k: v for k, v in request.headers.items()}
-        query = cache.Query(request.path.lstrip('/'), request.args, headers)
+        url = request.path.lstrip('/').rstrip('/').lstrip('render').lstrip('/')
+        query = cache.Query(url, request.args, headers)
         document = self.cache.query(query)
         return query, document
 
