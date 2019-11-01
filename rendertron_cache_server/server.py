@@ -57,7 +57,7 @@ class Server:
     def purge_cache(self, path) -> Response:
         try:
             query, document = self._request_doc()
-            self.cache.purge(document)
+            self.cache.purge(document, query)
             self.logger.log(logging.INFO, f'Purging {query.route}')
             return Response('Purged cache', status=200)
         except Exception as e:

@@ -41,6 +41,5 @@ class Document:
             os.remove(self.path)
 
     def purge(self):
-        path = os.path.dirname(self.path)
-        if os.path.exists(path):
-            rmtree(path, ignore_errors=False)
+        if os.path.exists(self.path) and os.path.isdir(self.path):
+            rmtree(self.path, ignore_errors=False)

@@ -10,18 +10,19 @@ import os
 
 class Resource:
     session: Session
+    logger: logging.Logger
 
     def __init__(self) -> None:
         self.session = Session()
+        self.logger = get_logger()
+
 
     def retrieve(self, doc: Document, q: Query) -> Content:
         host = urlparse(q.route).netloc
         q.headers['Host'] = host if host else urlparse(constants.RENDERTRON_CACHE_RESOURCE_URL).netloc
         url = f'{constants.RENDERTRON_CACHE_RESOURCE_URL}/{q.route}'
 
-        logger = get_logger()
-
-        logger.log(logging.DEBUG, f'[MISS] Retrieving resource {url}')
+        self.logger.log(logging.DEBUG, f'[MISS] Retrieving resource {url}')
         request = Request(
             method=constants.RENDERTRON_CACHE_RESOURCE_METHOD,
             url=url,
@@ -33,7 +34,7 @@ class Resource:
         headers = {k: v for k, v in response.headers.items() if k.lower() not in constants.RENDERTRON_CACHE_HEADER_RESPONSE_BLACKLIST}
         content = Content(response.status_code, headers, response.text)
 
-        logger.log(logging.DEBUG, f'[MISS] Retrieved resource {url} - {response.status_code}')
+        self.logger.log(logging.DEBUG, f'[MISS] Retrieved resource {url} - {response.status_code}')
 
         if response.status_code // 100 == 2:
             doc.write(content)

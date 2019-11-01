@@ -12,11 +12,12 @@ class Query:
         self.params = params
         self.headers = headers
 
-    def get_key(self) -> str:
+    def get_key(self, suffix=True) -> str:
         route = self.route.lstrip('/').rstrip('/').lstrip('render').lstrip('/').lstrip('http://').lstrip('https://')
         key = route
         if len(self.params) != 0:
             params = urllib.parse.urlencode(self.params)
             key += f'?{params}'
-        key += constants.RENDERTRON_CACHE_FILE_SUFFIX
+        if suffix:
+            key += constants.RENDERTRON_CACHE_FILE_SUFFIX
         return key
