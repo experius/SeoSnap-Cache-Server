@@ -1,0 +1,40 @@
+version: '3.2'
+services:
+  rcspy:
+    build:
+      context: .
+    image: rcspy
+    container_name: rcspy
+    restart: always
+    environment:
+      RENDERTRON_CACHE_RENDERTRON_URL: http://172.18.17.100:3000
+    env_file:
+      - .env.docker
+    volumes:
+      - type: bind
+        source: ./cache
+        target: /app/cache
+    networks:
+      rendertron_net:
+        ipv4_address: 172.18.17.200
+
+  rendertron:
+    image: ammobindotca/rendertron
+    container_name: rendertron
+    restart: always
+    ports:
+      - 3000:3000
+      - 8080:8080
+    networks:
+      rendertron_net:
+        ipv4_address: 172.18.17.100
+
+networks:
+  rendertron_net:
+    driver: bridge
+    driver_opts:
+      com.docker.network.enable_ipv6: "false"
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.18.17.0/24
