@@ -6,6 +6,8 @@ services:
     image: rcspy
     container_name: rcspy
     restart: always
+    ports:
+      - 5000:5000
     environment:
       RENDERTRON_CACHE_RENDERTRON_URL: http://172.18.17.100:3000
     env_file:
@@ -24,7 +26,6 @@ services:
     restart: always
     ports:
       - 3000:3000
-      - 8080:8080
     networks:
       rendertron_net:
         ipv4_address: 172.18.17.100
