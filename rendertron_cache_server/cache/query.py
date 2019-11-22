@@ -1,5 +1,7 @@
 import urllib.parse
 from typing import Dict
+
+from rendertron_cache_server import lremove, rremove
 from .. import constants
 
 class Query:
@@ -13,7 +15,7 @@ class Query:
         self.headers = headers
 
     def get_key(self, suffix=True) -> str:
-        route = lremove(self.route.lstrip('/').rstrip('/'), 'render').lstrip('/')
+        route = lremove(lremove(rremove(lremove(self.route, '/'), '/'), 'render'), '/')
         route = lremove(lremove(route, 'http://'), 'https://')
         route = lremove(lremove(route, 'http:/'), 'https:/')
         key = route
@@ -23,9 +25,3 @@ class Query:
         if suffix:
             key += constants.RENDERTRON_CACHE_FILE_SUFFIX
         return key
-
-
-def lremove(s, pattern) -> str:
-    if s.startswith(pattern):
-        s = s[len(pattern):]
-    return s

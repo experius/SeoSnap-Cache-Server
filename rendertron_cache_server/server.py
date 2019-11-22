@@ -2,7 +2,8 @@ from typing import Tuple
 
 import logging
 from flask import Flask, Response, request
-from rendertron_cache_server import cache, log
+from rendertron_cache_server import cache, log, lremove, rremove
+
 
 class Server:
     app: Flask
@@ -29,7 +30,8 @@ class Server:
     
     def _request_doc(self) -> Tuple[cache.Query, cache.Document]:
         headers = {k: v for k, v in request.headers.items()}
-        url = request.path.lstrip('/').rstrip('/').lstrip('render').lstrip('/')
+
+        url = lremove(lremove(rremove(lremove(request.path, '/'), '/'), 'render'), '/')
         query = cache.Query(url, request.args, headers)
         document = self.cache.query(query)
         return query, document

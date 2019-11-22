@@ -25,7 +25,9 @@ class Resource:
         url = f'{constants.RENDERTRON_CACHE_RESOURCE_URL}/{q.route}'
         if len(q.params) > 0:
             params = urllib.parse.urlencode(q.params)
-            url += urllib.parse.quote_plus(f'?{params}')
+            url += f'?{params}'
+        url = urllib.parse.quote_plus(url)
+
 
         self.logger.log(logging.DEBUG, f'[MISS] Retrieving resource {url}')
         request = Request(
