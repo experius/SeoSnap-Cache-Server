@@ -15,6 +15,7 @@ class Query:
     def get_key(self, suffix=True) -> str:
         route = lremove(self.route.lstrip('/').rstrip('/'), 'render').lstrip('/')
         route = lremove(lremove(route, 'http://'), 'https://')
+        route = lremove(lremove(route, 'http:/'), 'https:/')
         key = route
         if len(self.params) != 0:
             params = urllib.parse.urlencode(self.params)
