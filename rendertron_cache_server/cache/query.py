@@ -15,9 +15,9 @@ class Query:
         self.headers = headers
 
     def get_key(self, suffix=True) -> str:
-        route = lremove(lremove(rremove(lremove(self.route, '/'), '/'), 'render'), '/')
+        route = rremove(self.route, '/')
+        route = lremove(route, '/render/')
         route = lremove(lremove(route, 'http://'), 'https://')
-        route = lremove(lremove(route, 'http:/'), 'https:/')
         key = route
         if len(self.params) != 0:
             params = urllib.parse.urlencode(self.params)

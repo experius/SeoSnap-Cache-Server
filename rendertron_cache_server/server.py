@@ -31,7 +31,11 @@ class Server:
     def _request_doc(self) -> Tuple[cache.Query, cache.Document]:
         headers = {k: v for k, v in request.headers.items()}
 
-        url = lremove(lremove(rremove(lremove(request.path, '/'), '/'), 'render'), '/')
+        url = rremove(request.path, '/')
+        url = lremove(url, '/render/')
+        if url.find('://') < 0 and url.find(':/') >= 0:
+            url = url.replace(':/', '://')
+
         query = cache.Query(url, request.args, headers)
         document = self.cache.query(query)
         return query, document
