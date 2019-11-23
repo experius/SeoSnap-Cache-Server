@@ -5,8 +5,6 @@ import os
 
 from . import constants
 
-LOGGER_NAME = 'experius.rendertron.cache_server'
-
 
 def init():
     config_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'log_config.json')
@@ -15,4 +13,4 @@ def init():
 
 
 def get_logger():
-    return logging.getLogger(LOGGER_NAME)
+    return logging.getLogger()

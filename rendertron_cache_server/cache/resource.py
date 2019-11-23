@@ -2,12 +2,12 @@ import logging
 
 from requests import Session, Request
 
-import urllib
-from urllib.parse import urlparse
+from urllib.parse import urlparse, quote_plus
 from . import Document, Query, Content
 from .. import constants
 from rendertron_cache_server import get_logger
-import os
+from rendertron_cache_server.utils import *
+
 
 class Resource:
     session: Session
@@ -17,27 +17,26 @@ class Resource:
         self.session = Session()
         self.logger = get_logger()
 
-
     def retrieve(self, doc: Document, q: Query) -> Content:
-        host = urlparse(q.route).netloc
+        """Request rendertron server for a url"""
+        # Set host so server knows which website to serve
+        host = urlparse(q.url).netloc
         q.headers['Host'] = host if host else urlparse(constants.RENDERTRON_CACHE_RESOURCE_URL).netloc
 
-        url = f'{constants.RENDERTRON_CACHE_RESOURCE_URL}/{q.route}'
-        if len(q.params) > 0:
-            params = urllib.parse.urlencode(q.params)
-            url += f'?{params}'
-        url = urllib.parse.quote_plus(url)
+        # Quote target url so rendetron doesnt confuse anything
+        url = f'{constants.RENDERTRON_CACHE_RESOURCE_URL}/{quote_plus(q.url)}'
 
-
+        # Retrive resource
         self.logger.log(logging.DEBUG, f'[MISS] Retrieving resource {url}')
         request = Request(
             method=constants.RENDERTRON_CACHE_RESOURCE_METHOD,
             url=url,
             headers=q.headers
         ).prepare()
-
         response = self.session.send(request)
-        headers = {k: v for k, v in response.headers.items() if k.lower() not in constants.RENDERTRON_CACHE_HEADER_RESPONSE_BLACKLIST}
+
+        # Transform response into a document
+        headers = filter_dict(response.headers, constants.RENDERTRON_CACHE_HEADER_RESPONSE_BLACKLIST)
         content = Content(response.status_code, headers, response.text)
 
         self.logger.log(logging.DEBUG, f'[MISS] Retrieved resource {request.url} - {response.status_code}')

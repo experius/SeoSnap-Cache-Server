@@ -19,9 +19,12 @@ class Cache:
         self.log = get_logger()
 
     def query(self, q: Query, suffix=True) -> Document:
-        return Document(os.path.join(self.storage_path, q.get_key(suffix)))
+        """Builds a document from a query"""
+        path = os.path.join(self.storage_path, q.get_key(suffix))
+        return Document(path)
 
     def retrieve(self, doc: Document, q: Query) -> Content:
+        """Retrives a document from cache. If miss then cache it"""
         if doc.exists():
             content = doc.read()
             if constants.RENDERTRON_CACHE_DEBUG: content.headers['Rendertron-Cached'] = '1'
@@ -32,6 +35,7 @@ class Cache:
         return content
 
     def refresh(self, doc: Document, q: Query):
+        """Deletes the cached document then retrieves it"""
         self.delete(doc)
         return self.retrieve(doc, q)
 
@@ -39,6 +43,7 @@ class Cache:
         doc.delete()
 
     def purge(self, doc: Document, q: Query):
+        """Deletes a document and its children"""
         folder = self.query(q, False)
         file = self.query(q, True)
 

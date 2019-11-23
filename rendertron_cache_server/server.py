@@ -1,8 +1,19 @@
 from typing import Tuple
 
 import logging
+from functools import wraps
 from flask import Flask, Response, request
-from rendertron_cache_server import cache, log, lremove, rremove
+from rendertron_cache_server import cache, log
+from rendertron_cache_server.utils import *
+
+
+def document_middleware(f):
+    """Adds query and document as arguments to the route function"""
+    @wraps(f)
+    def middleware(server, *args, **kwargs):
+        query, document = request_to_doc(server)
+        return f(server, query, document)
+    return middleware
 
 
 class Server:
@@ -17,6 +28,13 @@ class Server:
         self.add_subroute('retrieve_cache', self.retrieve_cache, methods=['GET'])
         self.add_subroute('refresh_cache', self.refresh_cache, methods=['PUT'])
         self.add_subroute('purge_cache', self.purge_cache, methods=['DELETE'])
+        self.add_error_handler()
+
+    def add_error_handler(self):
+        @self.app.errorhandler(Exception)
+        def handle_error(e: Exception):
+            self.logger.exception(e, exc_info=True)
+            return Response(response='Cache server error', status=404)
 
     def add_subroute(self, name, callback, methods):
         self.app.add_url_rule('/', name, callback, methods=methods, defaults={'path': ''}, )
@@ -27,45 +45,35 @@ class Server:
 
     def get_app(self):
         return self.app
-    
-    def _request_doc(self) -> Tuple[cache.Query, cache.Document]:
-        headers = {k: v for k, v in request.headers.items()}
 
-        url = rremove(request.path, '/')
-        url = lremove(url, '/render/')
-        if url.find('://') < 0 and url.find(':/') >= 0:
-            url = url.replace(':/', '://')
+    @document_middleware
+    def retrieve_cache(self, query, document) -> Response:
+        """Retrieves a document from cache. If miss then cache it"""
+        self.logger.log(logging.INFO, f'[Server] Requesting {query.url}')
+        content = self.cache.retrieve(document, query)
+        return Response(content.content, status=content.status, headers=content.headers)
 
-        query = cache.Query(url, request.args, headers)
-        document = self.cache.query(query)
-        return query, document
+    @document_middleware
+    def refresh_cache(self, query, document) -> Response:
+        """Deletes the cached document then retrieves it"""
+        self.logger.log(logging.INFO, f'[Server] Refreshing {query.url}')
+        content = self.cache.refresh(document, query)
+        return Response(content.content, status=content.status, headers=content.headers)
 
-    def retrieve_cache(self, path) -> Response:
-        try:
-            query, document = self._request_doc()
-            self.logger.log(logging.INFO, f'Requesting {query.route}')
-            content = self.cache.retrieve(document, query)
-            return Response(content.content, status=content.status, headers=content.headers)
-        except Exception as e:
-            self.logger.log(logging.ERROR, e)
-            return Response(response='Cache server error', status=404)
+    @document_middleware
+    def purge_cache(self, query, document) -> Response:
+        """Deletes a document and its children"""
+        self.cache.purge(document, query)
+        self.logger.log(logging.INFO, f'[Server] Purging {query.url}')
+        return Response('Purged cache', status=200)
 
-    def refresh_cache(self, path) -> Response:
-        try:
-            query, document = self._request_doc()
-            self.logger.log(logging.INFO, f'Refreshing {query.route}')
-            content = self.cache.refresh(document, query)
-            return Response(content.content, status=content.status, headers=content.headers)
-        except Exception as e:
-            self.logger.log(logging.ERROR, e)
-            return Response(response='Cache server error', status=404)
 
-    def purge_cache(self, path) -> Response:
-        try:
-            query, document = self._request_doc()
-            self.cache.purge(document, query)
-            self.logger.log(logging.INFO, f'Purging {query.route}')
-            return Response('Purged cache', status=200)
-        except Exception as e:
-            self.logger.log(logging.ERROR, e)
-            return Response(response='Cache server error', status=404)
+def request_to_doc(server: Server) -> Tuple[cache.Query, cache.Document]:
+    """Extracts a rendertron query and a document from current request"""
+    headers = dict(request.headers.items())
+    route = extract_route(request.url)
+    url = extract_route_url(route)
+
+    query = cache.Query(url, headers)
+    document = server.cache.query(query)
+    return query, document
