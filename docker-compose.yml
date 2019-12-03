@@ -1,24 +1,24 @@
 version: '3.2'
 services:
-#  rcspy:
-#    build:
-#      context: .
-#    image: rcspy
-#    container_name: rcspy
-#    restart: always
-#    ports:
-#      - 5000:5000
-#    environment:
-#      RENDERTRON_CACHE_RENDERTRON_URL: http://172.18.17.100:3000
-#    env_file:
-#      - .env.docker
-#    volumes:
-#      - type: bind
-#        source: ./cache
-#        target: /app/cache
-#    networks:
-#      rendertron_net:
-#        ipv4_address: 172.18.17.200
+  rcspy:
+    build:
+      context: .
+    image: rcspy
+    container_name: rcspy
+    restart: always
+    ports:
+      - 5000:5000
+    environment:
+      RENDERTRON_CACHE_RENDERTRON_URL: http://172.18.17.100:3000
+    env_file:
+      - .env.docker
+    volumes:
+      - type: bind
+        source: ./cache
+        target: /app/cache
+    networks:
+      rendertron_net:
+        ipv4_address: 172.18.17.200
 
   rendertron:
     image: ammobindotca/rendertron

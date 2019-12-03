@@ -24,7 +24,9 @@ class Resource:
         q.headers['Host'] = host if host else urlparse(constants.RENDERTRON_CACHE_RESOURCE_URL).netloc
 
         # Quote target url so rendetron doesnt confuse anything
-        url = f'{constants.RENDERTRON_CACHE_RESOURCE_URL}/{quote_plus(q.url)}'
+        url_parts = q.url.split('?')
+        url = f'{constants.RENDERTRON_CACHE_RESOURCE_URL}/{url_parts[0]}'
+        if len(url_parts) > 1: url += quote_plus(f'?{url_parts[1]}')
 
         # Retrive resource
         self.logger.log(logging.DEBUG, f'[MISS] Retrieving resource {url}')
