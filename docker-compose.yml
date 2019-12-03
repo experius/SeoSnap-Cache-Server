@@ -21,7 +21,7 @@ services:
         ipv4_address: 172.18.17.200
 
   rendertron:
-    image: ammobindotca/rendertron
+    image: egordm/rendertron
     container_name: rendertron
     restart: always
     ports:
