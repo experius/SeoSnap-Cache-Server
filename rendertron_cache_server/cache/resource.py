@@ -43,7 +43,7 @@ class Resource:
 
         self.logger.log(logging.DEBUG, f'[MISS] Retrieved resource {request.url} - {response.status_code}')
 
-        if response.status_code // 100 == 2:
+        if response.status_code // 100 == 2 or response.status_code in constants.RENDERTRON_CACHE_ALLOWED_STATUS:
             doc.write(content)
 
         return content
