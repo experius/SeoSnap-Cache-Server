@@ -28,6 +28,9 @@ class Resource:
         url = f'{constants.RENDERTRON_CACHE_RESOURCE_URL}/{url_parts[0]}'
         if len(url_parts) > 1: url += quote_plus(f'?{url_parts[1]}')
 
+        # Append a rendertron no cache parameter
+        url += '?refreshCache=true'
+
         # Retrive resource
         self.logger.log(logging.DEBUG, f'[MISS] Retrieving resource {url}')
         request = Request(

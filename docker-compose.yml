@@ -8,8 +8,6 @@ services:
     restart: always
     ports:
       - 5000:5000
-    environment:
-      RENDERTRON_CACHE_RENDERTRON_URL: http://172.18.17.100:3000
     env_file:
       - .env.docker
     volumes:
@@ -17,8 +15,7 @@ services:
         source: ./cache
         target: /app/cache
     networks:
-      rendertron_net:
-        ipv4_address: 172.18.17.200
+      - rendertron_net
 
   rendertron:
     image: egordm/rendertron
@@ -27,15 +24,8 @@ services:
     ports:
       - 3000:3000
     networks:
-      rendertron_net:
-        ipv4_address: 172.18.17.100
+      - rendertron_net
 
 networks:
   rendertron_net:
     driver: bridge
-    driver_opts:
-      com.docker.network.enable_ipv6: "false"
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.18.17.0/24

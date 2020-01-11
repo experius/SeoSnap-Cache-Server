@@ -23,9 +23,9 @@ class Cache:
         path = os.path.join(self.storage_path, q.get_key(suffix))
         return Document(path)
 
-    def retrieve(self, doc: Document, q: Query) -> Content:
+    def retrieve(self, doc: Document, q: Query, ignore_cache: bool = False) -> Content:
         """Retrives a document from cache. If miss then cache it"""
-        if doc.exists():
+        if not ignore_cache and doc.exists():
             content = doc.read()
             if constants.RENDERTRON_CACHE_DEBUG: content.headers['Rendertron-Cached'] = '1'
         else:
@@ -36,8 +36,7 @@ class Cache:
 
     def refresh(self, doc: Document, q: Query):
         """Deletes the cached document then retrieves it"""
-        self.delete(doc)
-        return self.retrieve(doc, q)
+        return self.retrieve(doc, q, True)
 
     def delete(self, doc: Document):
         doc.delete()
