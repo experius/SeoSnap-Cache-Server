@@ -32,6 +32,7 @@ class Cache:
             content = self.resource.retrieve(doc, q)
             if constants.RENDERTRON_CACHE_DEBUG: content.headers['Rendertron-Cached'] = '0'
 
+        content.headers['Rendertron-Cached-At'] = content.cached_at
         return content
 
     def refresh(self, doc: Document, q: Query):

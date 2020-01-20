@@ -10,11 +10,13 @@ class Content:
     status: int
     headers: Dict[str, str]
     content: str
+    cached_at: str
 
-    def __init__(self, status: int, headers: Dict[str, str], content: str):
+    def __init__(self, status: int, headers: Dict[str, str], content: str, cached_at: str):
         self.status = status
         self.headers = headers
         self.content = content
+        self.cached_at = cached_at
 
 
 class Document:

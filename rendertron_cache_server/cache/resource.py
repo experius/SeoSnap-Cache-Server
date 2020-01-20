@@ -2,6 +2,7 @@ import logging
 
 from requests import Session, Request
 
+from datetime import date
 from urllib.parse import urlparse, quote_plus
 from . import Document, Query, Content
 from .. import constants
@@ -41,8 +42,9 @@ class Resource:
         response = self.session.send(request)
 
         # Transform response into a document
+        cached_at = date.today().strftime('%Y-%m-%dT%H:%i:%s')
         headers = filter_dict(response.headers, constants.RENDERTRON_CACHE_HEADER_RESPONSE_BLACKLIST)
-        content = Content(response.status_code, headers, response.text)
+        content = Content(response.status_code, headers, response.text, cached_at)
 
         self.logger.log(logging.DEBUG, f'[MISS] Retrieved resource {request.url} - {response.status_code}')
 
