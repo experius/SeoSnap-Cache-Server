@@ -5,6 +5,10 @@ EXPOSE 5000
 
 WORKDIR /app
 
+# Logging
+RUN mkdir /app/logs
+VOLUME /app/logs
+
 # Copy program
 COPY . .
 

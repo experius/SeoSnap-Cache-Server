@@ -27,10 +27,10 @@ class Cache:
         """Retrives a document from cache. If miss then cache it"""
         if not ignore_cache and doc.exists():
             content = doc.read()
-            if constants.RENDERTRON_CACHE_DEBUG: content.headers['Rendertron-Cached'] = '1'
+            content.headers['Rendertron-Cached'] = '1'
         else:
             content = self.resource.retrieve(doc, q)
-            if constants.RENDERTRON_CACHE_DEBUG: content.headers['Rendertron-Cached'] = '0'
+            content.headers['Rendertron-Cached'] = '0'
 
         content.headers['Rendertron-Cached-At'] = content.cached_at
         return content
@@ -50,4 +50,3 @@ class Cache:
         self.log.log(logging.DEBUG, f'Purging: {folder.path} and {file.path}')
         folder.purge()
         file.delete()
-
