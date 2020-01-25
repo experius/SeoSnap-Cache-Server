@@ -11,9 +11,8 @@ services:
     env_file:
       - .env.docker
     volumes:
-      - type: bind
-        source: ./cache
-        target: /app/cache
+      - .:/app
+      - ./cache:/app/cache
     networks:
       - rendertron_net
 

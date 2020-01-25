@@ -9,11 +9,12 @@ WORKDIR /app
 RUN mkdir /app/logs
 VOLUME /app/logs
 
-# Copy program
-COPY . .
-
-# Setup program
+# Install reqs
+COPY requirements.txt /app/
 RUN pip install -r requirements.txt
+
+# Copy program
+COPY . /app/
 
 # Mount cache
 RUN mkdir /app/cache
