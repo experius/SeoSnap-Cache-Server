@@ -1,3 +1,4 @@
+import os
 from typing import Tuple
 
 import logging
@@ -28,6 +29,7 @@ class Server:
         self.add_subroute('retrieve_cache', self.retrieve_cache, methods=['GET'])
         self.add_subroute('refresh_cache', self.refresh_cache, methods=['PUT'])
         self.add_subroute('purge_cache', self.purge_cache, methods=['DELETE'])
+        self.add_subroute('list_cache', self.list_cache, methods=['GET'], prefix='/list')
         self.add_error_handler()
 
     def add_error_handler(self):
@@ -36,9 +38,9 @@ class Server:
             self.logger.exception(e, exc_info=True)
             return Response(response='Cache server error', status=404)
 
-    def add_subroute(self, name, callback, methods):
-        self.app.add_url_rule('/', name, callback, methods=methods, defaults={'path': ''}, )
-        self.app.add_url_rule('/<path:path>', name, callback, methods=methods)
+    def add_subroute(self, name, callback, methods, prefix=''):
+        self.app.add_url_rule(f'{prefix}/', name, callback, methods=methods, defaults={'path': ''}, )
+        self.app.add_url_rule(f'{prefix}/<path:path>', name, callback, methods=methods)
 
     def start(self):
         self.app.run(threaded=False)
@@ -66,6 +68,13 @@ class Server:
         self.cache.purge(document, query)
         self.logger.log(logging.INFO, f'[Server] Purging {query.url}')
         return Response('Purged cache', status=200)
+
+    @document_middleware
+    def list_cache(self, query, document) -> Response:
+        """Lists all cached urls"""
+        self.logger.log(logging.INFO, f'[Server] Listing {query.url}')
+        urls = self.cache.list(document, query)
+        return Response("\n".join(urls), status=200, mimetype='text/plain')
 
 
 def request_to_doc(server: Server) -> Tuple[cache.Query, cache.Document]:

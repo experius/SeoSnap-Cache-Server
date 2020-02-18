@@ -1,10 +1,11 @@
 import logging
+from typing import List
+import urllib.parse as urllib
+from posixpath import join as urljoin
 
 from .. import constants
 from . import Document, Query, Content, os, Resource
 from rendertron_cache_server import get_logger
-
-from shutil import rmtree
 
 
 class Cache:
@@ -50,3 +51,20 @@ class Cache:
         self.log.log(logging.DEBUG, f'Purging: {folder.path} and {file.path}')
         folder.purge()
         file.delete()
+
+    def list(self, doc: Document, q: Query) -> List[str]:
+        root_path = os.path.abspath(os.path.join(self.storage_path, q.get_key(False)))
+        if not os.path.isdir(root_path): return []
+
+        root_url = '{uri.scheme}://{uri.netloc}/'.format(uri=urllib.urlparse(q.url))
+        suffix = constants.RENDERTRON_CACHE_FILE_SUFFIX
+
+        result = []
+        for (root, _, files) in os.walk(root_path):
+            root = root[len(root_path):].lstrip('/')  # Strip the root path
+            for file in files:
+                file = file[:-len(suffix)].lstrip('/')  # Strip the
+                url = urljoin(root_url, root, file)
+                result.append(url)
+
+        return result
