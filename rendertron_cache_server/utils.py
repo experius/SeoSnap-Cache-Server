@@ -28,6 +28,7 @@ def extract_route_url(url):
         url = url.replace(':/', '://')
 
     url = lrem(url, '/render/')
+    url = lrem(url, '/list/')
     url = rrem(url, '/')
 
     return url
