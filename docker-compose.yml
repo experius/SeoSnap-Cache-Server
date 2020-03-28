@@ -1,9 +1,10 @@
-version: '3.2'
+version: '3.7'
 services:
-  rcspy:
-    build: .
-    image: rcspy
-    container_name: rcspy
+  cacheserver:
+    build: 
+      context: .
+    image: experius/seosnap-cacheserver
+    container_name: cacheserver
     restart: always
     environment:
       RENDERTRON_CACHE_DEBUG:
@@ -19,8 +20,7 @@ services:
       - ./cache:/app/cache
     ports:
       - 5000:5000
-    env_file:
-      - .env.docker
+    env_file: .env.docker
     networks:
       - rendertron_net
 
