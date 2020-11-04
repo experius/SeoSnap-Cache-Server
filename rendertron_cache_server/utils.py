@@ -1,4 +1,5 @@
 import re
+import urllib.parse
 
 
 def lrem(s, pattern) -> str:
@@ -23,6 +24,8 @@ def extract_route(url):
 
 def extract_route_url(url):
     """Extract a target url from rendertron supported route"""
+    url = urllib.parse.unquote(url)
+
     # Fix missing slashes
     if url.find('://') < 0 and url.find(':/') >= 0:
         url = url.replace(':/', '://')
