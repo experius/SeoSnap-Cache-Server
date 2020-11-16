@@ -12,6 +12,7 @@ Route should be formatted as follows: `/render/your url`
 * GET - Retrieves and caches the page (if cached the cache will be used)
 * PUT - Invalidates cache for given url and retrieves it's content
 * DELETE - Invalidates cache for given url and all it's sub paths
+* GET with route /list/url - Lists all cached pages and their children.
 
 ## Benchmarks Results
  ```
