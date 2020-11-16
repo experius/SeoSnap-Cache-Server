@@ -25,9 +25,11 @@ services:
       - rendertron_net
 
   rendertron:
-    image: egordm/rendertron
+    image: egordm/rendertron:latest
     container_name: rendertron
     restart: always
+    volumes:
+      - ./rendertron-config.json:/app/config.json
     ports:
       - 3000:3000
     networks:
