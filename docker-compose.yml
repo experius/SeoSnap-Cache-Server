@@ -16,7 +16,6 @@ services:
       RENDERTRON_CACHE_HEADER_REQUEST_BLACKLIST:
       RENDERTRON_CACHE_HEADER_RESPONSE_BLACKLIST:
     volumes:
-      - .:/app
       - ./cache:/app/cache
     ports:
       - 5000:5000
