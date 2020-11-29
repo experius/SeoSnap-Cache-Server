@@ -1,0 +1,7 @@
+version: '3.2'
+services:
+  rcspy:
+    restart: "no"
+    volumes:
+      - .:/app
+      - ./cache:/app/cache

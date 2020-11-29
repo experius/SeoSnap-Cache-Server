@@ -1,25 +1,34 @@
-version: '3.2'
+version: '3.7'
 services:
-  rcspy:
-    build:
+  cacheserver:
+    build: 
       context: .
-    image: rcspy
-    container_name: rcspy
+    image: experius/seosnap-cacheserver
+    container_name: cacheserver
     restart: always
+    environment:
+      RENDERTRON_CACHE_DEBUG:
+      RENDERTRON_CACHE_LOCK_TIMEOUT:
+      RENDERTRON_CACHE_ROOT:
+      RENDERTRON_CACHE_FILE_SUFFIX:
+      RENDERTRON_CACHE_RESOURCE_URL:
+      RENDERTRON_CACHE_RESOURCE_METHOD:
+      RENDERTRON_CACHE_HEADER_REQUEST_BLACKLIST:
+      RENDERTRON_CACHE_HEADER_RESPONSE_BLACKLIST:
+    volumes:
+      - ./cache:/app/cache
     ports:
       - 5000:5000
-    env_file:
-      - .env.docker
-    volumes:
-      - .:/app
-      - ./cache:/app/cache
+    env_file: .env.docker
     networks:
       - rendertron_net
 
   rendertron:
-    image: egordm/rendertron
+    image: egordm/rendertron:latest
     container_name: rendertron
     restart: always
+    volumes:
+      - ./rendertron-config.json:/app/config.json
     ports:
       - 3000:3000
     networks:
