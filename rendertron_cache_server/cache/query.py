@@ -12,14 +12,18 @@ def parse_url(urls):
 class Query:
     url: str
     headers: Dict[str, str]
+    mobile: bool
 
-    def __init__(self, url: str, headers: Dict[str, str]) -> None:
+    def __init__(self, url: str, headers: Dict[str, str], mobile: bool = False) -> None:
         self.url = url
         self.headers = headers
+        self.mobile = True if 'Rendertron-Mobile' in headers else mobile
 
     def get_key(self, suffix=True) -> str:
         """Builds a key used to store the document"""
         key = strip_schema(self.url)
+        if self.mobile:
+            key += '.mobile'
         if suffix:
             key += constants.RENDERTRON_CACHE_FILE_SUFFIX
         return key

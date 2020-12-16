@@ -40,6 +40,8 @@ class Resource:
 
         # Append a rendertron no cache parameter
         url += '?refreshCache=true'
+        if q.mobile:
+            url += '&mobile'
 
         # Retrive resource
         self.logger.log(logging.DEBUG, f'[MISS] Retrieving resource {url}')
