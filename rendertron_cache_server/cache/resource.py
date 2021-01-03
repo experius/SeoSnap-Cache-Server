@@ -20,6 +20,7 @@ class Resource:
         self.session = Session()
         self.logger = get_logger()
 
+        self.after_retrieve_fn = None
         try:
             from plugins import after_retrieve
             self.after_retrieve_fn = after_retrieve
