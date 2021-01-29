@@ -3,7 +3,7 @@ services:
   cacheserver:
     build: 
       context: .
-    image: experius/seosnap-cacheserver
+    image: experius/seosnap-cacheserver:${TAG}
     container_name: cacheserver
     restart: always
     environment:
