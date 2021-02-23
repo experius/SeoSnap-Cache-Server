@@ -3,7 +3,7 @@ services:
   cacheserver:
     build: 
       context: .
-    image: experius/seosnap-cacheserver
+    image: experius/seosnap-cacheserver:${TAG}
     container_name: cacheserver
     restart: always
     environment:
@@ -15,6 +15,7 @@ services:
       RENDERTRON_CACHE_RESOURCE_METHOD:
       RENDERTRON_CACHE_HEADER_REQUEST_BLACKLIST:
       RENDERTRON_CACHE_HEADER_RESPONSE_BLACKLIST:
+      RENDERTRON_MOBILE_REGEX:
     volumes:
       - ./cache:/app/cache
     ports:

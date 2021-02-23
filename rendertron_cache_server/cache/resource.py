@@ -1,6 +1,7 @@
 import logging
+from typing import Callable
 
-from requests import Session, Request
+from requests import Session, Request, Response
 
 from datetime import datetime
 from urllib.parse import urlparse, quote_plus
@@ -13,10 +14,19 @@ from rendertron_cache_server.utils import *
 class Resource:
     session: Session
     logger: logging.Logger
+    after_retrieve_fn: Callable[[Content], Content]
 
     def __init__(self) -> None:
         self.session = Session()
         self.logger = get_logger()
+
+        self.after_retrieve_fn = None
+        try:
+            from plugins import after_retrieve
+            self.after_retrieve_fn = after_retrieve
+            print('Plugin found: after_retrieve')
+        except Exception as e:
+            print(e)  # No plugins found. Do nothing
 
     def retrieve(self, doc: Document, q: Query) -> Content:
         """Request rendertron server for a url"""
@@ -31,6 +41,8 @@ class Resource:
 
         # Append a rendertron no cache parameter
         url += '?refreshCache=true'
+        if q.mobile:
+            url += '&mobile'
 
         # Retrive resource
         self.logger.log(logging.DEBUG, f'[MISS] Retrieving resource {url}')
@@ -51,4 +63,6 @@ class Resource:
         if response.status_code // 100 == 2 or response.status_code in constants.RENDERTRON_CACHE_ALLOWED_STATUS:
             doc.write(content)
 
+        if self.after_retrieve_fn:
+            content = self.after_retrieve_fn(content)
         return content
