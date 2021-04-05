@@ -1,28 +1,28 @@
 version: '3.7'
 services:
-  cacheserver:
-    build: 
-      context: .
-    image: experiusnl/seosnap-cacheserver:${TAG}
-    container_name: cacheserver
-    restart: always
-    environment:
-      RENDERTRON_CACHE_DEBUG:
-      RENDERTRON_CACHE_LOCK_TIMEOUT:
-      RENDERTRON_CACHE_ROOT:
-      RENDERTRON_CACHE_FILE_SUFFIX:
-      RENDERTRON_CACHE_RESOURCE_URL:
-      RENDERTRON_CACHE_RESOURCE_METHOD:
-      RENDERTRON_CACHE_HEADER_REQUEST_BLACKLIST:
-      RENDERTRON_CACHE_HEADER_RESPONSE_BLACKLIST:
-      RENDERTRON_MOBILE_REGEX:
-    volumes:
-      - ./cache:/app/cache
-    ports:
-      - 5000:5000
-    env_file: .env.docker
-    networks:
-      - rendertron_net
+#  cacheserver:
+#    build:
+#      context: .
+#    image: experiusnl/seosnap-cacheserver:${TAG}
+#    container_name: cacheserver
+#    restart: always
+#    environment:
+#      RENDERTRON_CACHE_DEBUG:
+#      RENDERTRON_CACHE_LOCK_TIMEOUT:
+#      RENDERTRON_CACHE_ROOT:
+#      RENDERTRON_CACHE_FILE_SUFFIX:
+#      RENDERTRON_CACHE_RESOURCE_URL:
+#      RENDERTRON_CACHE_RESOURCE_METHOD:
+#      RENDERTRON_CACHE_HEADER_REQUEST_BLACKLIST:
+#      RENDERTRON_CACHE_HEADER_RESPONSE_BLACKLIST:
+#      RENDERTRON_MOBILE_REGEX:
+#    volumes:
+#      - ./cache:/app/cache
+#    ports:
+#      - 5000:5000
+#    env_file: .env.docker
+#    networks:
+#      - rendertron_net
 
   rendertron:
     image: egordm/rendertron:latest
