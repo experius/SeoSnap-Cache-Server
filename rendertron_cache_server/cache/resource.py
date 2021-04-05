@@ -49,7 +49,10 @@ class Resource:
         request = Request(
             method=constants.RENDERTRON_CACHE_RESOURCE_METHOD,
             url=url,
-            headers=q.headers
+            headers={
+                **q.headers,
+                'Accept-Encoding': 'gzip',
+            }
         ).prepare()
         response = self.session.send(request)
 
