@@ -5,5 +5,7 @@
     "cacheDurationMinutes": 1440,
     "cacheMaxEntries": -1,
     "snapshotDir": "/app/cache"
-  }
+  },
+  "stripSelectors": "",
+  "closeBrowser": false
 }
