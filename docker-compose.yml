@@ -25,7 +25,7 @@ services:
       - rendertron_net
 
   rendertron:
-    image: egordm/rendertron:latest
+    image: experiusnl/rendertron:latest
     container_name: rendertron
     restart: always
     volumes:
